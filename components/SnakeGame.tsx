@@ -18,9 +18,15 @@ export default function SnakeGame() {
 
   useEffect(() => {
     if (!open) return;
-    document.body.style.overflow = "hidden";
     const canvas = cv.current!;
     canvas.width = 480; canvas.height = 480;
+    const y = window.scrollY, b = document.body;
+    b.classList.add("game-open");
+    b.style.position = "fixed"; b.style.top = `-${y}px`; b.style.left = "0"; b.style.right = "0";
+    const coarse = window.matchMedia("(pointer:coarse)").matches;
+    const overlay = canvas.closest(".snake");
+    const noScroll = (e: Event) => e.preventDefault();
+    overlay?.addEventListener("touchmove", noScroll, { passive: false });
     const CELL = 480 / G;
     const ctx = canvas.getContext("2d")!;
     let snake: P[] = [], dir: P = { x: 1, y: 0 }, next: P = { x: 1, y: 0 }, food: P = { x: 0, y: 0 };
@@ -56,7 +62,7 @@ export default function SnakeGame() {
       dir = next;
       const h = { x: (snake[0].x + dir.x + G) % G, y: (snake[0].y + dir.y + G) % G };
       if (snake.some((s) => s.x === h.x && s.y === h.y)) {
-        alive = false; shake = 14; beep(120, 0.4);
+        alive = false; shake = coarse ? 0 : 14; beep(120, 0.4);
         if (sc > hi) { hi = sc; setBest(hi); }
         return;
       }
@@ -130,7 +136,10 @@ export default function SnakeGame() {
     canvas.addEventListener("touchstart", ts, { passive: true });
     canvas.addEventListener("touchend", te, { passive: true });
     return () => {
-      document.body.style.overflow = "";
+      overlay?.removeEventListener("touchmove", noScroll);
+      b.classList.remove("game-open");
+      b.style.position = ""; b.style.top = ""; b.style.left = ""; b.style.right = "";
+      window.scrollTo({ top: y, behavior: "instant" as ScrollBehavior });
       document.removeEventListener("keydown", key);
       canvas.removeEventListener("touchstart", ts);
       canvas.removeEventListener("touchend", te);

@@ -33,7 +33,8 @@ export function Ambient() {
     };
     const sc = () => {
       const h = document.documentElement;
-      h.style.setProperty("--sp", String(h.scrollTop / Math.max(1, h.scrollHeight - h.clientHeight)));
+      const bar = document.querySelector<HTMLElement>(".progress");
+      if (bar) bar.style.transform = `scaleX(${h.scrollTop / Math.max(1, h.scrollHeight - h.clientHeight)})`;
     };
     window.addEventListener("mousemove", mv);
     window.addEventListener("scroll", sc, { passive: true });
