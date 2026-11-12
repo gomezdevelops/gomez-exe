@@ -4,10 +4,13 @@ import { Loader, Cursor, Matrix, Typing, Ambient, emit } from "@/components/Fx";
 import Terminal from "@/components/Terminal";
 import SnakeGame from "@/components/SnakeGame";
 import CommandPalette from "@/components/CommandPalette";
-import { ROLES, GH, EMAIL, LINKEDIN, PROJECTS, STACK, PHILOSOPHY, NOTES } from "@/lib/data";
+import Tarot from "@/components/Tarot";
+import Constellation from "@/components/Constellation";
+import Unmask from "@/components/Unmask";
+import "@/components/extras.css";
+import { ROLES, GH, EMAIL, LINKEDIN, PHILOSOPHY, NOTES } from "@/lib/data";
 
 const NAV = ["projects", "stack", "philosophy", "terminal", "commits", "contact"];
-const half = Math.ceil(STACK.length / 2);
 
 export default function Home() {
   const [menu, setMenu] = useState(false);
@@ -31,7 +34,7 @@ export default function Home() {
       <header id="top" className="hero" onMouseMove={tilt}>
         <div className="hero-txt">
           <p className="mono dim">GOMEZ.EXE / SYSTEM INITIALIZED</p>
-          <h1><span>I build stuffs</span><span className="g">that can blow your mind</span></h1>
+          <h1><span>I design the impossible</span><span className="g">then I make it work.</span></h1>
           <p className="lead">Software Engineer building intelligent applications, scalable systems, and experiences that push past conventional development. From full-stack platforms to AI-powered utilities, I turn complex problems into elegant, working solutions.</p>
           <p className="roles mono"><Typing words={ROLES} /></p>
           <div className="cta">
@@ -45,7 +48,7 @@ export default function Home() {
           <div className="tilt">
             <div className="ring" />
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/pfp.png" alt="Gomez, anime-style blindfolded portrait" />
+            <img src="/pfp.png" alt="Gomez, anime-style portrait" />
             <div className="scan" />
             <span className="chip c1 mono">&gt; whoami</span>
             <span className="chip c2 mono">type snake in terminal</span>
@@ -53,38 +56,26 @@ export default function Home() {
         </div>
       </header>
 
-      <section className="sec rv">
-        <h2>More than just lines of code.</h2>
-        <div className="about">
-          <p>I&apos;m Abin Gomez, a Software Engineer building products where engineering, creativity and intelligent tech meet. I work across the full lifecycle: backend architecture, intuitive interfaces, and AI features that make apps smarter.</p>
-          <p>No fixed stack, no fixed project type. AI platforms, automation tools, interactive apps: I&apos;m driven by turning ambitious ideas into working products. I value clean architecture, continuous learning, and room to experiment.</p>
-          <p className="quote">I don&apos;t just want to build software that works. I want to build software worth remembering.</p>
-        </div>
-      </section>
-
-      <section id="projects" className="sec">
-        <h2 className="rv">Selected projects</h2>
-        <div className="bento">
-          {PROJECTS.map((p) => (
-            <article className="proj spot rv" key={p.id}>
-              <div className="idx">{p.id}</div>
-              <p className="mono dim">{p.tag}</p>
-              <h3>{p.name}</h3>
-              <p>{p.desc}</p>
-              <p className="chips">{p.stack.map((s) => <span key={s}>{s}</span>)}</p>
-              <p className="lnks">{p.links.map(([l, u]) => <a className="lnk" key={l} href={u} target="_blank" rel="noreferrer">{l}</a>)}</p>
-            </article>
-          ))}
-        </div>
-      </section>
-
-      <section id="stack" className="sec wide">
-        <h2 className="rv">Technologies I work with</h2>
-        {[STACK.slice(0, half), STACK.slice(half)].map((row, i) => (
-          <div key={i} className={`mq ${i ? "rev" : ""}`}>
-            <div>{[...row, ...row].map((s, n) => <span key={n} className="tech">{s}</span>)}</div>
+      <section id="about" className="sec about-sec">
+        <div>
+          <h2 className="rv">More than just lines of code.</h2>
+          <div className="about rv">
+            <p>I&apos;m Abin Gomez, a Software Engineer building products where engineering, creativity and intelligent tech meet. I work across the full lifecycle: backend architecture, intuitive interfaces, and AI features that make apps smarter.</p>
+            <p>No fixed stack, no fixed project type. AI platforms, automation tools, interactive apps: I&apos;m driven by turning ambitious ideas into working products. I value clean architecture, continuous learning, and room to experiment.</p>
+            <p className="quote">I don&apos;t just want to build software that works. I want to build software worth remembering.</p>
           </div>
-        ))}
+        </div>
+        <Unmask />
+      </section>
+
+      <section id="projects" className="sec feat">
+        <h2 className="rv">Featured projects</h2>
+        <Tarot />
+      </section>
+
+      <section id="stack" className="sec">
+        <h2 className="rv">Technologies I work with</h2>
+        <Constellation />
       </section>
 
       <section id="philosophy" className="sec">
@@ -117,7 +108,7 @@ export default function Home() {
         <p className="rv"><a className="btn big" href={`mailto:${EMAIL}`}>{EMAIL}</a></p>
       </section>
 
-      <footer>Designed by curiosity. Built with code. Powered by imagination.<b>GOMEZ.EXE</b></footer>
+      <footer><b>GOMEZ.EXE</b></footer>
     </>
   );
 }

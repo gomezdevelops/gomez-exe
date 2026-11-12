@@ -5,7 +5,7 @@ import { GH, EMAIL, PROJECTS } from "@/lib/data";
 
 type L = { id: number; text: string; cls?: string };
 const go = (s: string) => document.querySelector(s)?.scrollIntoView({ behavior: "smooth" });
-const CMDS = ["help","about","skills","projects","github","neofetch","git log","whoami","contact","sudo hire-me","matrix","snake","palette","ls","clear"];
+const CMDS = ["help","about","skills","projects","github","neofetch","git log","whoami","contact","sudo hire-me","matrix","snake","reveal","palette","ls","clear"];
 
 export default function Terminal() {
   const [lines, setLines] = useState<L[]>([]);
@@ -28,7 +28,7 @@ export default function Terminal() {
     if (l === "sudo hire-me") { print("[sudo] password: ********"); print("permission granted. see contact.", "ok"); go("#contact"); return; }
     if (l === "git log") return print(["commit a1f3c9e  feat: job tracker live", "commit 7be20d4  feat: suspect leaderboard", "commit 3c9aa51  init: GOMEZ.EXE portfolio"].join("\n"));
     switch (l.split(" ")[0]) {
-      case "help": return print("about  skills  projects  github  neofetch  git log  whoami  contact  sudo hire-me  matrix  snake  palette  ls  clear");
+      case "help": return print("about  skills  projects  github  neofetch  git log  whoami  contact  sudo hire-me  matrix  snake  reveal  palette  ls  clear");
       case "about": return print("Software engineer. Full-stack, AI-powered apps, scalable systems, side quests in games and Discord bots.");
       case "skills": return print("Python · TypeScript · JavaScript · React · Next.js · FastAPI · Flask · Node.js · PostgreSQL · SQLite · MongoDB · Docker · Unity");
       case "projects": print(PROJECTS.map((p) => `${p.id} ${p.name}: ${p.tag}`).join("\n")); return go("#projects");
@@ -39,6 +39,7 @@ export default function Terminal() {
       case "matrix": emit("toggle-matrix"); return print("wake up, neo. (Esc to exit)", "ok");
       case "snake": emit("open-snake"); return print("launching snake.exe ...", "ok");
       case "palette": emit("open-cmdk"); return print("opening command palette ...", "ok");
+      case "reveal": case "unmask": emit("unmask"); go("#about"); return print("revealing the person behind the code ...", "ok");
       case "clear": return setLines([]);
       case "github":
         print("fetching api.github.com ...");

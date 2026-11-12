@@ -27,6 +27,7 @@ export default function CommandPalette() {
     { tag: "go", label: "Commits", hint: "github activity", action: () => go("#commits") },
     { tag: "go", label: "Contact", hint: "say hi", action: () => go("#contact") },
     { tag: "do", label: "Play Snake", hint: "opens the game", action: () => emit("open-snake") },
+    { tag: "do", label: "Reveal", hint: "meet the person behind the code", action: () => { go("#about"); emit("unmask"); } },
     { tag: "do", label: "Toggle Matrix Rain", hint: "easter egg", action: () => emit("toggle-matrix") },
     { tag: "do", label: "Copy Email", hint: EMAIL, action: () => { navigator.clipboard?.writeText(EMAIL).catch(() => {}); } },
     { tag: "link", label: "Open GitHub", hint: `github.com/${GH}`, action: () => window.open(`https://github.com/${GH}`, "_blank") },

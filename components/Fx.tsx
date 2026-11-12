@@ -3,19 +3,73 @@ import { useEffect, useRef, useState } from "react";
 
 export { emit } from "@/lib/bus";
 
+const BOOT = ["GOMEZ.EXE v1.0", "mounting /projects ........ ok", "loading stars ............. ok", "loading identity ......... pending", "identity found."];
+
 export function Loader() {
-  const [done, setDone] = useState(false);
-  const [p, setP] = useState(0);
+  const [phase, setPhase] = useState(0);
+  const [lines, setLines] = useState<string[]>([]);
+  const cv = useRef<HTMLCanvasElement>(null);
+
   useEffect(() => {
-    const t = setInterval(() => setP((v) => (v >= 100 ? 100 : v + 4)), 45);
-    const d = setTimeout(() => setDone(true), 1500);
-    return () => { clearInterval(t); clearTimeout(d); };
+    let skip = false;
+    try { skip = sessionStorage.getItem("booted") === "1"; } catch { /* ignore */ }
+    if (skip || window.matchMedia("(prefers-reduced-motion: reduce)").matches) { setPhase(3); return; }
+    document.body.style.overflow = "hidden";
+    const t: number[] = [];
+    BOOT.forEach((l, i) => t.push(window.setTimeout(() => setLines((p) => [...p, l]), i * 240)));
+    t.push(window.setTimeout(() => setPhase(1), BOOT.length * 240 + 200));
+    t.push(window.setTimeout(() => setPhase(2), 7000));
+    return () => t.forEach(clearTimeout);
   }, []);
+
+  useEffect(() => {
+    if (phase !== 1) return;
+    const c = cv.current!, x = c.getContext("2d")!;
+    c.width = c.height = 320;
+    const img = new Image();
+    const off = document.createElement("canvas"), ox = off.getContext("2d")!;
+    const steps = [6, 10, 16, 28, 48, 96, 320];
+    let i = 0, t = 0;
+    img.onload = () => {
+      const tick = () => {
+        const sz = steps[i];
+        off.width = off.height = sz;
+        ox.drawImage(img, 0, 0, sz, sz);
+        x.imageSmoothingEnabled = false;
+        x.clearRect(0, 0, 320, 320);
+        x.drawImage(off, 0, 0, 320, 320);
+        i++;
+        t = window.setTimeout(i < steps.length ? tick : () => setPhase(2), i < steps.length ? 170 : 600);
+      };
+      tick();
+    };
+    img.onerror = () => setPhase(2);
+    img.src = "/pfp.png";
+    return () => clearTimeout(t);
+  }, [phase]);
+
+  useEffect(() => {
+    if (phase !== 2) return;
+    const t = window.setTimeout(() => setPhase(3), 650);
+    return () => clearTimeout(t);
+  }, [phase]);
+
+  useEffect(() => {
+    if (phase !== 3) return;
+    document.body.style.overflow = "";
+    try { sessionStorage.setItem("booted", "1"); } catch { /* ignore */ }
+  }, [phase]);
+
+  if (phase === 3) return null;
   return (
-    <div className={`loader ${done ? "gone" : ""}`}>
-      <div className="mono">GOMEZ.EXE / SYSTEM INITIALIZING</div>
-      <div className="bar"><i style={{ width: p + "%" }} /></div>
-      <div className="mono dim">{Math.min(p, 100)}%</div>
+    <div className={`boot ${phase === 2 ? "out" : ""}`}>
+      {phase === 0 && <pre className="boot-log mono">{lines.join("\n")}<b className="typing">▌</b></pre>}
+      {phase >= 1 && (
+        <div className="boot-pic">
+          <canvas ref={cv} />
+          <span className="mono">GOMEZ.EXE</span>
+        </div>
+      )}
     </div>
   );
 }
